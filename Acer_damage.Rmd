@@ -44,6 +44,16 @@ barGraphStats <- function(data, variable, byFactorNames) {
 Data manipulation
 
 ```{r}
+
+#income level to character#
+
+damage$Income <- as.character(damage$Income)
+
+##replace "NA"s in Forest Income Level##
+
+damage$Income <- damage$Income %>% replace_na("None")
+
+
 ##remove NAs##
 
 damage2<- na.omit(damage)
@@ -52,20 +62,27 @@ damage2<- na.omit(damage)
 damage2$Percent_damage <- as.numeric(damage2$Percent_damage)
 
 
+
+
 ```
-
-
-
-
 
 
 Explore percent damage graphs
 
 ```{r}
-ggplot(data = barGraphStats(data = damage, variable = "Percent_damage", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean)) +
+## Percent damage vs. Area ##
+ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean)) +
     geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
     scale_fill_brewer(palette = "Set1") +
     ylab("Percent Damage") + xlab("Area")
-```
 
+## Percent damage vs. Area and Income Level ##
+
+ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type", "Income")), aes(x= Area_type, y=mean, fill=Income)) +
+    geom_bar(stat='identity', position=position_dodge()) +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
+    scale_fill_brewer(palette = "Set1") +
+    ylab("Percent Damage") + xlab("Area Type")
+```
+Prepare Analysis
