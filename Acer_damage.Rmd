@@ -7,18 +7,30 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Load packages, set your working directory, and add data
+Load packages, set your working directory, and add data AMY
 ```{r}
 library(tidyverse)
 library(ggpubr)
 library(RColorBrewer)
 library(rcompanion)
 
-setwd("C:/Users/hrusk/Dropbox (Smithsonian)/2021_SummerInterns/EB") #amy laptop#
-
 damage <- read.csv("A_rubrum_damage_04Aug2021.csv")
+setwd("C:/Users/hrusk/Dropbox (Smithsonian)/2021_SummerInterns/EB") #amy laptop# 
 
 ```
+
+Packages, Working Directory, Data EB
+```{r}
+library(tidyverse)
+library(ggpubr)
+library(RColorBrewer)
+library(rcompanion)
+
+
+setwd("~/Dropbox (University of Michigan)/2021_SummerInterns/EB")
+damage <- read.csv("A_rubrum_damage_04Aug2021.csv")
+```
+
 
 Graphing function
 ```{r}
@@ -62,8 +74,6 @@ damage2<- na.omit(damage)
 damage2$Percent_damage <- as.numeric(damage2$Percent_damage)
 
 
-
-
 ```
 
 
@@ -79,10 +89,46 @@ ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFacto
 
 ## Percent damage vs. Area and Income Level ##
 
+damage2$Income <- factor(damage2$Income, levels=c("Low", "Medium", "High", "None"))
+
 ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type", "Income")), aes(x= Area_type, y=mean, fill=Income)) +
     geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
     scale_fill_brewer(palette = "Set1") +
     ylab("Percent Damage") + xlab("Area Type")
 ```
-Prepare Analysis
+
+Preparing for Analysis
+
+Test for Norm: Spoiler Alert it is not 
+```{r}
+shapiro.test(damage2$Percent_damage)
+ggqqplot(damage2$Percent_damage)
+
+damage2$Percent_damage_t <- transformTukey(damage2$Percent_damage)
+tukey_lamda <- transformTukey(damage2$Percent_damage, returnLambda =TRUE)
+
+shapiro.test(damage2$Percent_damage_t)
+
+damage2$Percent_damage_log <- log(damage2$Percent_damage +1)
+shapiro.test(damage2$Percent_damage_log)
+
+##Helping Visualize the Ugly that is my data##
+plot(damage2$Percent_damage_log)
+hist(damage2$Percent_damage_log)
+hist(damage2$Percent_damage, breaks = )
+
+```
+
+Load in new packages 
+```{r}
+library(lme4)
+library(nlme)
+```
+
+Ana<3
+```{r}
+mod1 <- lme(Percent_damage ~ Area_type, data = damage2, random = 1|Area_type/Tree_num)
+```
+
+
