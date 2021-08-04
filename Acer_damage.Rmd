@@ -1,0 +1,71 @@
+---
+title: "Acer_damage"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load packages, set your working directory, and add data
+```{r}
+library(tidyverse)
+library(ggpubr)
+library(RColorBrewer)
+library(rcompanion)
+
+setwd("C:/Users/hrusk/Dropbox (Smithsonian)/2021_SummerInterns/EB") #amy laptop#
+
+damage <- read.csv("A_rubrum_damage_04Aug2021.csv")
+
+```
+
+Graphing function
+```{r}
+#barGraphStats(data=, variable="", byFactorNames=c(""))
+barGraphStats <- function(data, variable, byFactorNames) {
+  count <- length(byFactorNames)
+  N <- aggregate(data[[variable]], data[byFactorNames], FUN=length)
+  names(N)[1:count] <- byFactorNames
+  names(N) <- sub("^x$", "N", names(N))
+  mean <- aggregate(data[[variable]], data[byFactorNames], FUN=mean)
+  names(mean)[1:count] <- byFactorNames
+  names(mean) <- sub("^x$", "mean", names(mean))
+  sd <- aggregate(data[[variable]], data[byFactorNames], FUN=sd)
+  names(sd)[1:count] <- byFactorNames
+  names(sd) <- sub("^x$", "sd", names(sd))
+  preSummaryStats <- merge(N, mean, by=byFactorNames)
+  finalSummaryStats <- merge(preSummaryStats, sd, by=byFactorNames)
+  finalSummaryStats$se <- finalSummaryStats$sd / sqrt(finalSummaryStats$N)
+  return(finalSummaryStats)
+}
+```
+
+Data manipulation
+
+```{r}
+##remove NAs##
+
+damage2<- na.omit(damage)
+
+#make percent damage numeric variable#
+damage2$Percent_damage <- as.numeric(damage2$Percent_damage)
+
+
+```
+
+
+
+
+
+
+Explore percent damage graphs
+
+```{r}
+ggplot(data = barGraphStats(data = damage, variable = "Percent_damage", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean)) +
+    geom_bar(stat='identity', position=position_dodge()) +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
+    scale_fill_brewer(palette = "Set1") +
+    ylab("Percent Damage") + xlab("Area")
+```
+
