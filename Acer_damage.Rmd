@@ -7,19 +7,22 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Load packages, set your working directory, and add data AMY
+AMH - Load packages, set your working directory, and add data AMY
 ```{r}
 library(tidyverse)
 library(ggpubr)
 library(RColorBrewer)
 library(rcompanion)
 
-damage <- read.csv("A_rubrum_damage_04Aug2021.csv")
+
 setwd("C:/Users/hrusk/Dropbox (Smithsonian)/2021_SummerInterns/EB") #amy laptop# 
+
+damage <- read.csv("A_rubrum_damage_04Aug2021.csv")
+
 
 ```
 
-Packages, Working Directory, Data EB
+EB - Packages, Working Directory, Data 
 ```{r}
 library(tidyverse)
 library(ggpubr)
@@ -58,16 +61,13 @@ Data manipulation
 ```{r}
 
 #income level to character#
-
 damage$Income <- as.character(damage$Income)
 
 ##replace "NA"s in Forest Income Level##
-
 damage$Income <- damage$Income %>% replace_na("None")
 
 
 ##remove NAs##
-
 damage2<- na.omit(damage)
 
 #make percent damage numeric variable#
@@ -116,19 +116,23 @@ shapiro.test(damage2$Percent_damage_log)
 ##Helping Visualize the Ugly that is my data##
 plot(damage2$Percent_damage_log)
 hist(damage2$Percent_damage_log)
-hist(damage2$Percent_damage, breaks = )
 
 ```
 
 Load in new packages 
 ```{r}
+
 library(lme4)
 library(nlme)
+
 ```
 
 Ana<3
 ```{r}
+
 mod1 <- lme(Percent_damage ~ Area_type, data = damage2, random = 1|Area_type/Tree_num)
+##Object not found is the random factor##
+
 ```
 
 
