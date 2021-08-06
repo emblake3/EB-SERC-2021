@@ -130,8 +130,17 @@ library(nlme)
 Ana<3
 ```{r}
 
-mod1 <- lme(Percent_damage ~ Area_type, data = damage2, random = 1|Area_type/Tree_num)
-##Object not found is the random factor##
+library(lattice)
+library(effects)
+
+##Messing around with models
+mod0 <- lm(Percent_damage ~ Area_type, data = damage2)
+
+mod1 <- lme(Percent_damage ~Area_type, random = ~1|Area_type/Tree_num, data = damage2)
+
+mod2 <- lme(Percent_damage ~ Area_type, random = ~1|Tree_num, data = damage2)
+
+
 
 ```
 
