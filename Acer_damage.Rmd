@@ -94,7 +94,7 @@ damage2$Income <- factor(damage2$Income, levels=c("Low", "Medium", "High", "None
 ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type", "Income")), aes(x= Area_type, y=mean, fill=Income)) +
     geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
-    scale_fill_brewer(palette = "Set1") +
+    scale_fill_brewer(palette = "Accent") +
     ylab("Percent Damage") + xlab("Area Type")
 ```
 
@@ -129,6 +129,3 @@ library(nlme)
 Ana<3
 ```{r}
 mod1 <- lme(Percent_damage ~ Area_type, data = damage2, random = 1|Area_type/Tree_num)
-```
-
-
