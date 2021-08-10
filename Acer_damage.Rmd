@@ -84,8 +84,7 @@ Explore percent damage graphs
 ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill=Area_type)) +
     geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
-    scale_fill_brewer(palette = "Set2") +
-    ylab("Percent Damage") + xlab("Area Type") 
+   scale_fill_manual(breaks = c("2", "1", "0.5"), values=c("#00B2A9", "#575294", "#702082", "palegreen3")) + ylab("Percent Damage") + xlab("Area Type")
 ```
 
 
@@ -98,7 +97,7 @@ damage2$Income <- factor(damage2$Income, levels=c("Low", "Medium", "High", "None
 ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type", "Income")), aes(x= Area_type, y=mean, fill=Income)) +
     geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
-    scale_fill_brewer(palette = "Paired") +
+scale_fill_manual(breaks = c("2", "1", "0.5"), values=c("#FFCB05", "#00274C", "#2F65A7", "#00B2A9")) +
     ylab("Percent Damage") + xlab("Area Type")
 ```
 
@@ -159,5 +158,21 @@ mod2 <- lme(Percent_damage ~ Area_type, random = ~1|Tree_num, data = damage2)
 
 ```{r}
 display.brewer.all(colorblindFriendly = TRUE)
+install.packages("wesanderson")
+library(wesanderson)
+
+```{r}
+ggplot(data = barGraphStats(data = damage2, variable = "Spiders", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill=Area_type)) +
+    geom_bar(stat='identity', position=position_dodge()) +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
+   scale_fill_manual(breaks = c("2", "1", "0.5"), values=c("#00B2A9", "#575294", "#702082", "palegreen3")) + ylab("Percent Damage") + xlab("Area Type")
 ```
+```{r}
+#Herb and Pred Combine
+
+
+```
+
+```{r}
+
 
