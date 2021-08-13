@@ -244,7 +244,7 @@ scale_fill_manual(values = EBpalette1) + xlab(" Income") + ylab("Abundance") + t
 ```
 
 ```{r}
-##LM ##Scatterplot bugs
+##LM Scatterplot bugs
 
 herbivore_lm <- lm(Percent_damage ~ herbivore, data = damage2)
 summary(herbivore_lm)
