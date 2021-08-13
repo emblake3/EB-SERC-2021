@@ -73,6 +73,13 @@ damage2<- na.omit(damage)
 #make percent damage numeric variable#
 damage2$Percent_damage <- as.numeric(damage2$Percent_damage)
 
+##make column for herbivores##
+damage2 <- damage2 %>%
+  mutate(herbivore = Grasshoppers_crickets_katydids + Caterpillar_like + Hoppers + Aphids + Thrips + Herb_beetles + Whiteflies_mealybugs_scale.insects + Mirid + Larve_pinchers)
+
+##make column for predators##
+damage2 <- damage2 %>%
+  mutate(predator = Pred_beetles + Assassins + Spiders + Wasps)
 
 ```
 
@@ -106,14 +113,24 @@ g1 + theme(panel.background = element_blank(), panel.grid.major = element_blank(
 ## Percent damage vs. Area and Income Level ##
 
 damage2$Income <- factor(damage2$Income, levels=c("Low", "Medium", "High", "None"))
+EBpalette <- c("#FFCB05", "#00274C", "#2F65A7", "#00B2A9")
 
-ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type", "Income")), aes(x= Area_type, y=mean, fill=Income)) +
+g2 <- ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type", "Income")), aes(x= Area_type, y=mean, fill=Income)) +
     geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
-scale_fill_manual(name = "Income Level", breaks = c("2", "1", "0.5"), values=c("#FFCB05", "#00274C", "#2F65A7", "#00B2A9")) +
-    ylab("Percent Damage") + xlab("Area Type")
-```
+scale_fill_manual(values = EBpalette)
 
+gg <- g2 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+```
+Income graph with legend 
+```{r}
+damage2$Income <- factor(damage2$Income, levels=c("Low", "Medium", "High", "None"))
+
+g2 <- ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type", "Income")), aes(x= Area_type, y=mean, fill=Income)) +
+    geom_bar(stat='identity', position=position_dodge()) +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
+scale_fill_manual()
+```
 
 ```
 
