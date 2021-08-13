@@ -81,6 +81,10 @@ damage2 <- damage2 %>%
 damage2 <- damage2 %>%
   mutate(predator = Pred_beetles + Assassins + Spiders + Wasps)
 
+##create dataframe without forest##
+damage3 <- damage2 %>%
+  filter(Area_type == "Urban"|Area_type == "Suburban ")
+
 ```
 
 
@@ -120,8 +124,10 @@ g2 <- ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", b
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
 scale_fill_manual(values = EBpalette)
 
-gg <- g2 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+g2 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 ```
+
+
 Income graph with legend 
 ```{r}
 damage2$Income <- factor(damage2$Income, levels=c("Low", "Medium", "High", "None"))
@@ -165,9 +171,8 @@ library(nlme)
 
 Ana<3
 ```{r}
-<<<<<<< HEAD
-mod1 <- lme(Percent_damage ~ Area_type, data = damage2, random = 1|Area_type/Tree_num)
-=======
+#####mod1 <- lme(Percent_damage ~ Area_type, data = damage2, random = 1|Area_type/Tree_num)
+
 
 library(lattice)
 library(effects)
@@ -179,7 +184,10 @@ mod1 <- lme(Percent_damage ~Area_type, random = ~1|Area_type/Tree_num, data = da
 
 mod2 <- lme(Percent_damage ~ Area_type, random = ~1|Tree_num, data = damage2)
 
+mod3 <- lme(Percent_damage ~ Area_type*Income, random = ~1|Tree_num, data = damage3)
 
+anova(mod2)
+anova(mod3)
 
 ```
 
