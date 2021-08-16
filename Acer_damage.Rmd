@@ -107,10 +107,15 @@ cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",
 g1 <- ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill = Area_type)) +
     geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
-    scale_fill_manual(values = cbPalette)
+    xlab("Area type") + ylab("Percent Damage") +
+    scale_fill_manual(values = cbPalette) 
 
 ##setting theme to remove background grid and add axis lines##    
-g1 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+g1 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24), legend.position = "none")
+           
+           ###axis.title = element_text(size = 20), axis.text = element_text(size = 16))
+
+
 ```
 
 ```{r}
@@ -122,9 +127,9 @@ EBpalette <- c("#FFCB05", "#00274C", "#2F65A7", "#00B2A9")
 g2 <- ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type", "Income")), aes(x= Area_type, y=mean, fill=Income)) +
     geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
-scale_fill_manual(values = EBpalette)
+    scale_fill_manual(values = EBpalette)
 
-g2 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+g2 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24))
 ```
 
 
