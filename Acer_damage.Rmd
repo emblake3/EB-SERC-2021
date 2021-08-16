@@ -92,56 +92,32 @@ Explore percent damage graphs
 
 ```{r}
 ## Percent damage vs. Area ##
-EBpalette1 <- c("#00B2A9", "#989C97", "#D86018", "#702082")
+EBpalette1 <- c("#FE6100", "#DC267F", "#785EF0", "#702082")
   
 g1 <- ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill=Area_type)) +
     geom_bar(stat='identity', position=position_dodge(), width=0.8) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
 scale_fill_manual(values = EBpalette1) + theme(legend.position = "none") + xlab("Area Type") + ylab("Percent Damage")
 
-g11 <- g1 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+g1 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+g11 <- g1 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24),axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)), legend.position = "none")
+
 ```
 
-Another way to graph (with a colorblind palette)
-```{r}
-##Creating colourblind palette###
-cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-
-##saved graph as variable to edit theme below##
-g2 <- ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill = Area_type)) +
-    geom_bar(stat='identity', position=position_dodge()) +
-    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
-    xlab("Area type") + ylab("Percent Damage") +
-    scale_fill_manual(values = cbPalette) 
-
-##setting theme to remove background grid and add axis lines##    
-<<<<<<< HEAD
-g22 <- g2 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
-=======
-g1 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24),axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)), legend.position = "none")
-           
->>>>>>> 90c5d1e2c106fea604aaf8e5eefed433f4d1ce04
-
-g1 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24),axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)), legend.position = "none")
-           
-```
 
 ```{r}
+
 ## Percent damage vs. Area and Income Level ##
 
 damage2$Income <- factor(damage2$Income, levels=c("Low", "Medium", "High", "None"))
-EBpalette <- c("#FFCB05", "#00274C", "#2F65A7", "#00B2A9")
+EBpalette <- c("#FFCB05", "#2F65A7", "#00274C", "#00B2A9")
 
 g3 <- ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type", "Income")), aes(x= Area_type, y=mean, fill=Income)) +
     geom_bar(stat='identity', position=position_dodge()) +
-    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) + scale_fill_manual(values = EBpalette) + xlab("Area Type") + ylab("Percent Damage")
 
-scale_fill_manual(values = EBpalette) + xlab("Area Type") + ylab("Percent Damage")
-
-g33 <- g3 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) + xlab("Area type") + ylab("Percent Damage") +
-    scale_fill_manual(values = EBpalette)
-
-g2 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)))
+g33 <- g3 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)))
 
 
 ```
@@ -212,11 +188,6 @@ anova(mod3)
 
 
 ```{r}
-display.brewer.all(colorblindFriendly = TRUE)
-install.packages("wesanderson")
-library(wesanderson)
-
-```{r}
 ##BUG GRAPHS
 
 ##Herb Area Type
@@ -253,33 +224,4 @@ ggplot(damage2, aes(x = herbivore, y = Percent_damage, color = Area_type)) +
   xlab("Number of Herbivores") + ylab("Percent Damage")
 
 
-```
->>>>>>> 2f10b395d2ce73fa7fbef14d9bdff1ee7a0a3f85
-
-        
-        
-```
-```{r}
-
-full_dataherbivore <- data.frame(damage2, predictedherbivore)
-
-g8 <- ggplot(full_dataherbivore, aes(x = herbivore, y = Percent_damage))+
-  geom_point()+
-  geom_line(aes(x = herbivore, y = fit)) +
-  geom_ribbon(aes(x = herbivore, ymin = lwr, ymax = upr), alpha = 0.3) +
-  annotate("text", x = 14, y = 60, label = "y = -1.68x + 22.99")+
-  annotate("text", x = 14, y = 55, label = "italic(R) ^ 2 == 0.28", parse = TRUE)+
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), axis.line = element_line(colour = "black"))+
-  labs(y = expression(Mean~number~of~entry~holes~on~cutting), x = expression(Distance~to~surface~water~(m) ))
-
-
-ggplot(damage2, aes(x=herbivore, y=Percent_damage)) +
-  geom_point(aes(color=Area_type)) + 
-  scale_color_manual(values = c("purple",  "blue", "yellow")) +
-  geom_smooth(aes(color=Area_type, fill=Area_type), size=1.35, method=lm) +
-  labs(x="Herbivore Abundance", y="Perccent Damage") +
-    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), axis.line = element_line(colour = "black"))
-      
 ```
