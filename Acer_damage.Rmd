@@ -19,7 +19,6 @@ setwd("C:/Users/hrusk/Dropbox (Smithsonian)/2021_SummerInterns/EB") #amy laptop#
 
 damage <- read.csv("A_rubrum_damage_04Aug2021.csv")
 
-
 ```
 
 EB - Packages, Working Directory, Data 
