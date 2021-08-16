@@ -187,7 +187,6 @@ anova(mod3)
 ```
 
 
->>>>>>> 91f09b3b0fd02489603241501e2f304805ba6e15
 
 ```{r}
 display.brewer.all(colorblindFriendly = TRUE)
@@ -202,6 +201,15 @@ ggplot(data = barGraphStats(data = damage2, variable = "Spiders", byFactorNames 
 ```
 
 
+Herbivory graphs 
 ```{r}
 
+ggplot(damage2, aes(x = herbivore, y = Percent_damage, color = Area_type)) + 
+  geom_point(shape = 1) +
+  scale_colour_hue(l=50) +
+  geom_smooth(method = lm, se = FALSE, fullrange = TRUE) +
+  xlab("Number of Herbivores") + ylab("Percent Damage")
+
+
+```
 
