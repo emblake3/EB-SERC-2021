@@ -111,10 +111,18 @@ cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",
 g2 <- ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill = Area_type)) +
     geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
-    scale_fill_manual(values = cbPalette)
+    xlab("Area type") + ylab("Percent Damage") +
+    scale_fill_manual(values = cbPalette) 
 
 ##setting theme to remove background grid and add axis lines##    
+<<<<<<< HEAD
 g22 <- g2 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+=======
+g1 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24),axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)), legend.position = "none")
+           )
+
+
+>>>>>>> a9e52a08b0d53a43f179913b9f9f6f5d57bdc345
 ```
 
 ```{r}
@@ -126,12 +134,19 @@ EBpalette <- c("#FFCB05", "#00274C", "#2F65A7", "#00B2A9")
 g3 <- ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type", "Income")), aes(x= Area_type, y=mean, fill=Income)) +
     geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
+<<<<<<< HEAD
 scale_fill_manual(values = EBpalette) + xlab("Area Type") + ylab("Percent Damage")
 
 g33 <- g3 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 ```
+=======
+    xlab("Area type") + ylab("Percent Damage") +
+    scale_fill_manual(values = EBpalette)
+>>>>>>> a9e52a08b0d53a43f179913b9f9f6f5d57bdc345
 
+g2 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)))
 
+<<<<<<< HEAD
 Income graph with legend 
 ```{r}
 damage2$Income <- factor(damage2$Income, levels=c("Low", "Medium", "High", "None"))
@@ -140,6 +155,8 @@ g3 <- ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", b
     geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
 scale_fill_manual()
+=======
+>>>>>>> a9e52a08b0d53a43f179913b9f9f6f5d57bdc345
 ```
 
 ```
@@ -203,6 +220,7 @@ display.brewer.all(colorblindFriendly = TRUE)
 install.packages("wesanderson")
 library(wesanderson)
 
+<<<<<<< HEAD
 ```{r}
 ##BUG GRAPHS
 
@@ -240,8 +258,15 @@ g7 <- ggplot(data = barGraphStats(data = damage3, variable = "predator", byFacto
 scale_fill_manual(values = EBpalette1) + xlab(" Income") + ylab("Abundance") + theme(legend.position = "none")
 
 
-
+=======
+``` {r}
+ggplot(data = barGraphStats(data = damage2, variable = "Spiders", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill=Area_type)) +
+    geom_bar(stat='identity', position=position_dodge()) +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
+   scale_fill_manual(breaks = c("2", "1", "0.5"), values=c("#00B2A9", "#575294", "#702082", "palegreen3")) + ylab("Percent Damage") + xlab("Area Type")
 ```
+>>>>>>> a9e52a08b0d53a43f179913b9f9f6f5d57bdc345
+
 
 ```{r}
 ##LM Scatterplot bugs
