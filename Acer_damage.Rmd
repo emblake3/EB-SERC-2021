@@ -266,7 +266,7 @@ g8 <- ggplot(full_dataherbivore, aes(x = herbivore, y = Percent_damage))+
 
 ggplot(damage2, aes(x=herbivore, y=Percent_damage)) +
   geom_point(aes(color=Area_type)) + 
-  scale_color_manual(values = c("red",  "blue", "green")) +
+  scale_color_manual(values = c("purple",  "blue", "yellow")) +
   geom_smooth(aes(color=Area_type, fill=Area_type), size=1.35, method=lm) +
   labs(x="Herbivore Abundance", y="Perccent Damage") +
     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
