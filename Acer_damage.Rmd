@@ -155,11 +155,13 @@ hist(damage2$Percent_damage_log)
 
 ```
 
-Load in new packages 
+Load in new packages for GLM and GLMMS
 ```{r}
 
 library(lme4)
 library(nlme)
+library(lattice)
+library(effects)
 
 ```
 
@@ -167,9 +169,6 @@ Ana<3
 ```{r}
 #####mod1 <- lme(Percent_damage ~ Area_type, data = damage2, random = 1|Area_type/Tree_num)
 
-
-library(lattice)
-library(effects)
 
 ##Messing around with models
 mod0 <- lm(Percent_damage ~ Area_type, data = damage2)
