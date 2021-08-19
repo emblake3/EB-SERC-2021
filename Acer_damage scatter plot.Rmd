@@ -236,13 +236,45 @@ summary(herbivore_lm)
 
 predictedherbivore <- predict(herbivore_lm, interval = "confidence", level = 0.95)
 
+EBpalette2 <- c("#DC267F", "#785EF0", "#702082")
+EBpalette3 <- c("#117733", "#882255")
 
-##Scatterplot of herbivores by Area##
-ggplot(damage2, aes(x = herbivore, y = Percent_damage, color = Area_type)) + 
+##Scatterplot of HERB by Area without forest##
+g69 <- ggplot(damage3, aes(x = herbivore, y = Percent_damage, color = Area_type)) + 
   geom_point(shape = 1) +
   scale_colour_hue(l=50) +
-  geom_smooth(method = lm, se = FALSE, fullrange = TRUE) +
-  xlab("Number of Herbivores") + ylab("Percent Damage") + scale_color_manual(values = EBpalette1) +  theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24),axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)), legend.position = "none")
+  geom_smooth(method = "lm", se = FALSE, fullrange = FALSE) +
+  xlab("Number of Herbivores") + ylab("Percent Damage") + scale_color_manual(values = EBpalette2) +  theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24),axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)))
+```
+
+
+```{r}
+##Scatterplot of PRED by Area##
+g420 <- ggplot(damage3, aes(x = predator, y = Percent_damage, color = Area_type)) + 
+  geom_point(shape = 1) +
+  scale_colour_hue(l=50) +
+  geom_smooth(method = "lm", se = FALSE, fullrange = FALSE) +
+  xlab("Number of Predator") + ylab("Percent Damage") + scale_color_manual(values = EBpalette2) +  theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24),axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)))
+```
+
+```{r}
+##Scatterplot of PRED by Herb##
+g333 <- ggplot(damage3, aes(x = herbivore, y = predator, color = Area_type)) + 
+  geom_point(shape = 1) +
+  scale_colour_hue(l=50) +
+  geom_smooth(method = "lm", se = FALSE, fullrange = FALSE) +
+  xlab("Number of Herbivore") + ylab("Number of Predator") + scale_color_manual(values = EBpalette2) +  theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24),axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)))
+
+```
+
+```{r}
+##Histogram of Ugly##
+
+ggplot(damage2, aes(x = herbivore, y = Percent_damage, color = Area_type)) + 
+  geom_bar(stat='identity', position=position_dodge()) +
+  scale_colour_hue(l=50) +
+  xlab("Number of Herbivores") + ylab("Percent Damage") + scale_fill_manual(values = EBpalette2) +  theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24),axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)), legend.position = "none")
+
 
 ```
 
