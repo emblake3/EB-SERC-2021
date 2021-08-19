@@ -84,6 +84,12 @@ damage2 <- damage2 %>%
 damage3 <- damage2 %>%
   filter(Area_type == "Urban"|Area_type == "Suburban ")
 
+damage4 <- damage2 %>%
+  filter(Area_type == "Urban")
+
+damage5 <- damage2 %>%
+  filter(Area_type == "Suburban ")
+
 ```
 
 
@@ -231,17 +237,30 @@ Anova(predator_area)
 ```{r}
 ##Effects of Herbivores on damage##
 
+####damage by herbivores in forest, suburban, and urban####
 herbivore_glm <- lm(Percent_damage ~ herbivore*Area_type, data = damage2)
-summary(herbivore_lm)
+summary(herbivore_glm)$adj.r.squared
+anova(herbivore_glm)
+##predictedherbivore <- predict(herbivore_lm, interval = "confidence", level = 0.95)
 
-predictedherbivore <- predict(herbivore_lm, interval = "confidence", level = 0.95)
+####damage by herbivores in suburban and urban####
+herbivore_glm2 <- lm(Percent_damage ~ herbivore*Area_type, data = damage3)
+summary(herbivore_glm2)$adj.r.squared
+anova(herbivore_glm2)
 
+####damage by herbivores in suburban####
+herb_sub <- lm(Percent_damage ~ herbivore, data = damage5)
+summary(herb_sub)$adj.r.squared
+
+####damage by herbivores in urban####
+herb_urb <- lm(Percent_damage ~ herbivore, data = damage4)
+summary(herb_urb)
 
 ##Scatterplot of herbivores by Area##
 ggplot(damage2, aes(x = herbivore, y = Percent_damage, color = Area_type)) + 
   geom_point(shape = 1) +
   scale_colour_hue(l=50) +
-  geom_smooth(method = lm, se = FALSE, fullrange = TRUE) +
+  geom_smooth(method = "lm", se = FALSE, fullrange = FALSE) +
   xlab("Number of Herbivores") + ylab("Percent Damage")
 
 
