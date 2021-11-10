@@ -113,24 +113,22 @@ ggsave("damage_area1.png")
 
 ## Percent damage vs. Area and Income Level ##
 
-damage2$Income <- factor(damage2$Income, levels=c("Low", "Medium", "High", "None"))
+damage3$Income <- factor(damage3$Income, levels=c("Low", "Medium", "High", "None"))
 EBpalette <- c("#FFCB05" ,"#2F65A7", "#00274C", "#00B2A9")
 
-g3 <- ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type", "Income")), aes(x= Area_type, y=mean, fill=Income)) +
+g3 <- ggplot(data = barGraphStats(data = damage3, variable = "Percent_damage", byFactorNames = c("Area_type", "Income")), aes(x= Area_type, y=mean, fill=Income)) +
     geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
-    annotate("text", x = 1, y = 2.7, label = "n/a", size = 8)+
-    annotate("text", x = 1.7, y = 3.2, label = "a", size = 8)+
-    annotate("text", x = 2.02, y = 1.8, label = "b", size = 8)+
-    annotate("text", x = 2.3, y = 4, label = "a", size = 8) +
-    annotate("text", x = 2.7, y = 3.7, label = "a", size = 8) +
-    annotate("text", x = 3.02, y = 1.2, label = "b", size = 8) +
-    annotate("text", x = 3.3, y = 1.5, label = "b", size = 8) +
+    annotate("text", x = .7, y = 3.2, label = "a", size = 8)+
+    annotate("text", x = 1, y = 1.8, label = "b", size = 8)+
+    annotate("text", x = 1.3, y = 4, label = "a", size = 8) +
+    annotate("text", x = 1.7, y = 3.7, label = "a", size = 8) +
+    annotate("text", x = 2, y = 1.2, label = "b", size = 8) +
+    annotate("text", x = 2.3, y = 1.5, label = "b", size = 8) +
     scale_fill_manual(values = EBpalette) + xlab("Area Type") + ylab("Percent Damage")
 
 g3 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)))
 
-ggsave("damage_income_area.png")
 
 ```
 
@@ -212,6 +210,19 @@ scale_fill_manual(values = EBpalette1) + xlab("Area Type") + ylab("Predator Abun
 g5 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 
 ```
+```{r}
+#Anovas for Bugs by Area 
+
+herbanova <- aov(herbivore ~ Area_type, data = damage2)
+summary(herbanova)
+
+predanova <- aov(predator ~ Area_type, data = damage2)
+summary(predanova)
+
+herbtukey <- TukeyHSD(herbanova)
+herbtukey
+```
+
 
 Model effect of area on herbivores and predators
 ```{r}
@@ -242,9 +253,10 @@ EBpalette3 <- c("#117733", "#882255")
 ##Scatterplot of HERB by Area without forest##
 g69 <- ggplot(damage3, aes(x = herbivore, y = Percent_damage, color = Area_type)) + 
   geom_point(shape = 1) +
-  scale_colour_hue(l=50) +
   geom_smooth(method = "lm", se = FALSE, fullrange = FALSE) +
   xlab("Number of Herbivores") + ylab("Percent Damage") + scale_color_manual(values = EBpalette2) +  theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24),axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)))
+
+g69
 ```
 
 
@@ -252,10 +264,10 @@ g69 <- ggplot(damage3, aes(x = herbivore, y = Percent_damage, color = Area_type)
 ##Scatterplot of PRED by Area##
 g420 <- ggplot(damage3, aes(x = predator, y = Percent_damage, color = Area_type)) + 
   geom_point(shape = 1) +
-  scale_colour_hue(l=50) +
   geom_smooth(method = "lm", se = FALSE, fullrange = FALSE) +
   xlab("Number of Predator") + ylab("Percent Damage") + scale_color_manual(values = EBpalette2) +  theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24),axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)))
 ```
+
 
 ```{r}
 ##Scatterplot of PRED by Herb##
@@ -266,14 +278,6 @@ g333 <- ggplot(damage3, aes(x = herbivore, y = predator, color = Area_type)) +
   xlab("Number of Herbivore") + ylab("Number of Predator") + scale_color_manual(values = EBpalette2) +  theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24),axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)))
 
 ```
-
-```{r}
-##Histogram of Ugly##
-
-ggplot(damage2, aes(x = herbivore, y = Percent_damage, color = Area_type)) + 
-  geom_bar(stat='identity', position=position_dodge()) +
-  scale_colour_hue(l=50) +
-  xlab("Number of Herbivores") + ylab("Percent Damage") + scale_fill_manual(values = EBpalette2) +  theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24),axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)), legend.position = "none")
 
 
 ```
