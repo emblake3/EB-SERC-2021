@@ -84,6 +84,13 @@ damage2 <- damage2 %>%
 damage3 <- damage2 %>%
   filter(Area_type == "Urban"|Area_type == "Suburban ")
 
+##bugs 
+damage4 <- damage2 %>%
+  select(Tree_num, Leaf_num, predator, herbivore, Area_type) %>%
+  filter(Leaf_num == "1")
+
+damage5 <- gather(damage4, insectgroup, abundance, c(herbivore, predator), factor_key = TRUE)
+
 ```
 
 
@@ -193,7 +200,7 @@ emmeans(mod3, list(pairwise ~ Area_type*Income), adjust = "tukey")
 ##BUG GRAPHS##
 
 ##Herb Area Type
-g4 <- ggplot(data = barGraphStats(data = damage2, variable = "herbivore", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill=Area_type)) +
+g4 <- ggplot(data = barGraphStats(data = damage4, variable = "herbivore", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill=Area_type)) +
    geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
 scale_fill_manual(values = EBpalette1) + xlab("Area Type") + ylab("Herbivore Abundance") + theme(legend.position = "none")
@@ -202,12 +209,20 @@ g4 + theme(panel.background = element_blank(), panel.grid.major = element_blank(
 
 
 ##Pred Area Type
-g5 <- ggplot(data = barGraphStats(data = damage2, variable = "predator", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill=Area_type)) +
+g5 <- ggplot(data = barGraphStats(data = damage4, variable = "predator", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill=Area_type)) +
     geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
 scale_fill_manual(values = EBpalette1) + xlab("Area Type") + ylab("Predator Abundance") + theme(legend.position = "none")
 
 g5 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+#Pred and Herb Together
+g6 <- ggplot(data = barGraphStats(data = damage5, variable = "abundance", byFactorNames = 
+  c("Area_type", "insectgroup")), aes(x=Area_type, y=mean, fill=insectgroup)) +
+   geom_bar(stat='identity', position=position_dodge()) +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +        xlab("Area Type") + ylab("Abundance") + theme(legend.position = "none")
+
+g6 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), legend.title=element_blank(), legend.text=element_text(size=18))
 
 ```
 ```{r}
@@ -218,6 +233,11 @@ summary(herbanova)
 
 predanova <- aov(predator ~ Area_type, data = damage2)
 summary(predanova)
+
+anova3 <- aov(abundance ~ Area_type * insectgroup, data = damage5)
+
+anova3tukey <- TukeyHSD(anova3)
+anova3tukey
 
 herbtukey <- TukeyHSD(herbanova)
 herbtukey
