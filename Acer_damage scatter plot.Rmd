@@ -220,9 +220,15 @@ g5 + theme(panel.background = element_blank(), panel.grid.major = element_blank(
 g6 <- ggplot(data = barGraphStats(data = damage5, variable = "abundance", byFactorNames = 
   c("Area_type", "insectgroup")), aes(x=Area_type, y=mean, fill=insectgroup)) +
    geom_bar(stat='identity', position=position_dodge()) +
-    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +        xlab("Area Type") + ylab("Abundance") + theme(legend.position = "none")
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) + xlab("Area Type") + ylab("Abundance")
 
-g6 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), legend.title=element_blank(), legend.text=element_text(size=18))
+g6 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), legend.title=element_blank(), legend.text=element_text(size=18)) + expand_limits(y=8) +  theme(legend.position=c(.87,.9), axis.text.x=element_text(size=12, color = "black")) +
+    annotate("text", x = .78, y = 1, label = "a", size = 8)+
+    annotate("text", x = 1.22, y = 2, label = "a", size = 8)+
+    annotate("text", x = 1.77, y = 7.5, label = "b", size = 8) +
+    annotate("text", x = 2.22, y = 5.7, label = "bc", size = 8) +
+    annotate("text", x = 2.77, y = 3.4, label = "ac", size = 8) +
+    annotate("text", x = 3.22, y = 2.6, label = "a", size = 8)
 
 ```
 ```{r}
