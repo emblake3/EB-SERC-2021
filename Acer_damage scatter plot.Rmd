@@ -86,7 +86,7 @@ damage3 <- damage2 %>%
 
 ##bugs 
 damage4 <- damage2 %>%
-  select(Tree_num, Leaf_num, predator, herbivore, Area_type) %>%
+  select(Tree_num, Leaf_num, predator, herbivore, Area_type, Income) %>%
   filter(Leaf_num == "1")
 
 damage5 <- gather(damage4, insectgroup, abundance, c(herbivore, predator), factor_key = TRUE)
@@ -99,6 +99,7 @@ Explore percent damage graphs
 ```{r}
 ## Percent damage vs. Area ##
 EBpalette1 <- c("#FE6100", "#DC267F", "#785EF0", "#702082")
+EBpalettewoforest <- c("#DC267F", "#785EF0")
   
 g1 <- ggplot(data = barGraphStats(data = damage2, variable = "Percent_damage", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill=Area_type)) +
     geom_bar(stat='identity', position=position_dodge(), width=0.8) +
@@ -121,7 +122,7 @@ ggsave("damage_area1.png")
 ## Percent damage vs. Area and Income Level ##
 
 damage3$Income <- factor(damage3$Income, levels=c("Low", "Medium", "High", "None"))
-EBpalette <- c("#FFCB05" ,"#2F65A7", "#00274C", "#00B2A9")
+EBpalette <- c("#FFCB05" ,"#00B2A9", "#00274C", "#00B2A9")
 
 g3 <- ggplot(data = barGraphStats(data = damage3, variable = "Percent_damage", byFactorNames = c("Area_type", "Income")), aes(x= Area_type, y=mean, fill=Income)) +
     geom_bar(stat='identity', position=position_dodge()) +
@@ -199,24 +200,29 @@ emmeans(mod3, list(pairwise ~ Area_type*Income), adjust = "tukey")
 ```{r}
 ##BUG GRAPHS##
 
-##Herb Area Type
-g4 <- ggplot(data = barGraphStats(data = damage4, variable = "herbivore", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill=Area_type)) +
+#BUG X AREA
+
+#Herb x Area Type
+g4 <- ggplot(data = barGraphStats(data = subset(damage4, Area_type!="Forest"), variable = "herbivore", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill=Area_type)) +
    geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
-scale_fill_manual(values = EBpalette1) + xlab("Area Type") + ylab("Herbivore Abundance") + theme(legend.position = "none")
+scale_fill_manual(values = EBpalettewoforest) + xlab("Area Type") + ylab("Herbivore Abundance") + theme(legend.position = "none") +
+annotate("text", x = 1, y = 7.3, label = "*", size = 8)
+  
+g4 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24),axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)), legend.position = "none")
+   
 
-g4 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
-
-
-##Pred Area Type
-g5 <- ggplot(data = barGraphStats(data = damage4, variable = "predator", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill=Area_type)) +
+#Pred x Area Type
+g5 <- ggplot(data = barGraphStats(data = subset(damage4, Area_type!="Forest"), variable = "predator", byFactorNames = c("Area_type")), aes(x=Area_type, y=mean, fill=Area_type)) +
     geom_bar(stat='identity', position=position_dodge()) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
-scale_fill_manual(values = EBpalette1) + xlab("Area Type") + ylab("Predator Abundance") + theme(legend.position = "none")
+scale_fill_manual(values = EBpalettewoforest) + xlab("Area Type") + ylab("Predator Abundance") + theme(legend.position = "none") +
+   annotate("text", x = 1, y = 5.3, label = "*", size = 8)
 
-g5 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+g5 + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24),axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)), legend.position = "none")
+   
 
-#Pred and Herb Together
+#Pred and Herb Together = NOT NEEDED ANYMORE - doesn’t make sense to compare between when really we just care herbivore versus predator in each area type 
 g6 <- ggplot(data = barGraphStats(data = subset(damage5, Area_type!= "Forest"), variable = "abundance", byFactorNames = 
   c("Area_type", "insectgroup")), aes(x=insectgroup, y=mean, fill=Area_type)) +
    geom_bar(stat='identity', position=position_dodge()) +
@@ -228,6 +234,48 @@ scale_x_discrete(limits = c("herbivore", "predator"),breaks= c("herbivore", "pre
     annotate("text", x = 1.23, y = 3.5, label = "bc", size = 8)+
     annotate("text", x = 1.77, y = 5.7, label = "ab", size = 8) +
     annotate("text", x = 2.23, y = 2.7, label = "c", size = 8)
+
+
+
+#BUG x INCOME
+
+EBpalette <- c("#FFCB05" ,"#00B2A9", "#00274C", "#00B2A9")
+
+damage4$Income <- factor(damage4$Income, levels = c("Low", "Medium", "High"))
+
+#Herb x Income
+emb <- ggplot(data = barGraphStats(data = subset(damage4, Area_type!= "Forest"), variable = "herbivore", byFactorNames = c("Area_type","Income")), aes(x=Area_type, y=mean, fill=Income)) +
+    geom_bar(stat='identity', position=position_dodge()) +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
+    annotate("text", x = .7, y = 2.5, label = "a", size = 8)+
+    annotate("text", x = 1, y = 8.25, label = "b", size = 8)+
+    annotate("text", x = 1.3, y = 12.5, label = "c", size = 8) +
+    annotate("text", x = 1.7, y = 2.75, label = "a", size = 8) +
+    annotate("text", x = 2, y = 4, label = "d", size = 8) +
+    annotate("text", x = 2.3, y = 4.5, label = "d", size = 8) +
+scale_fill_manual(values = EBpalette) + xlab("Area Type") + ylab("Herbivore Abundance") 
+
+embdone <- emb + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)))
+
+embdone 
+ggsave("herb_income.png", embdone, width = 10, height = 7, dpi = 500)
+
+#Pred x Income
+xyz <- ggplot(data = barGraphStats(data = subset(damage4, Area_type!= "Forest"), variable = "predator", byFactorNames = c("Area_type","Income")), aes(x=Area_type, y=mean, fill=Income)) +
+    geom_bar(stat='identity', position=position_dodge()) +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width = 0.2, position = position_dodge(0.9)) +
+   annotate("text", x = .7, y = 4.5, label = "a", size = 8)+
+    annotate("text", x = 1, y = 3.74, label = "b", size = 8)+
+    annotate("text", x = 1.3, y = 9.75, label = "c", size = 8) +
+    annotate("text", x = 1.7, y = 1.75, label = "d", size = 8) +
+    annotate("text", x = 2, y = 3, label = "b", size = 8) +
+    annotate("text", x = 2.3, y = 3.5, label = "b", size = 8) +
+  scale_fill_manual(values = EBpalette) + xlab("Area Type") + ylab("Predator Abundance")
+
+xyzdone <- xyz + theme(panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size = 24), axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)), axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)))
+
+xyzdone
+ggsave("pred_income.png", xyzdone, width = 10, height = 7, dpi = 500)
 
 ```
 ```{r}
@@ -253,13 +301,33 @@ Model effect of area on herbivores and predators
 ```{r}
 library(car)
 
-#Use generalized linear models with poisson distrubution because it is count data ##
+#Use generalized linear models with poisson distribution because it is count data ##
 
+#Area 
 herbivore_area <- glm(herbivore ~ Area_type, family = poisson, data = damage2)
 Anova(herbivore_area)
 
 predator_area <- glm(predator ~ Area_type, family = poisson, data = damage2)
 Anova(predator_area)
+
+#Income
+herbivore_income <- glm(herbivore ~ Income, family = poisson, data = damage4)
+Anova(herbivore_income)
+
+predator_income <- glm(predator ~ Income, family = poisson, data = damage4)
+Anova(predator_income)
+
+
+predator_areain <- glm(predator ~ Area_type * Income, family = poisson, data = subset(damage2, Area_type!= "Forest"))
+Anova(predator_areain)
+
+herbivore_areain <- glm(herbivore ~ Area_type * Income, family = poisson, data = subset(damage2, Area_type!= "Forest"))
+Anova(herbivore_areain)
+
+emmeans(herbivore_areain, list(pairwise ~ Area_type*Income), adjust = "tukey")
+
+emmeans(predator_areain, list(pairwise ~ Area_type*Income), adjust = "tukey")
+
 
 ```
 
