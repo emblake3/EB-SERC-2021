@@ -118,12 +118,13 @@ ggplot(data=damage, aes(x=Area_type, y=Percent_damage, fill=Area_type, color=Are
                   fill=after_scale(colorspace::lighten(fill, .3))),
               size=1, bw=.3) +
   geom_boxplot(width=0.1, size=1, outlier.size=3, fill='white') +
-  annotate("text", x = 1, y = -2, label = "a", size = 8) + #probability zero damage
+  scale_x_discrete(limits=c('Urban', 'Suburban ', 'Forest')) +
+  annotate("text", x = 3, y = -2, label = "c", size = 8) + #probability zero damage
   annotate("text", x = 2, y = -2, label = "b", size = 8) +
-  annotate("text", x = 3, y = -2, label = "c", size = 8) +
-  annotate("text", x = 1, y = 67, label = "A", size = 8) + #average of non-zero data
-  annotate("text", x = 2, y = 67, label = "B", size = 8) +
-  annotate("text", x = 3, y = 55, label = "B", size = 8)
+  annotate("text", x = 1, y = -2, label = "a", size = 8) +
+  annotate("text", x = 3, y = 67, label = "B", size = 8) + #average of non-zero data
+  annotate("text", x = 2, y = 67, label = "A", size = 8) +
+  annotate("text", x = 1, y = 55, label = "A", size = 8)
 #export at 600x600
 
 
@@ -175,19 +176,20 @@ ggplot(data=subset(damage, Area_type!='Forest'), aes(x=Area_type, y=Percent_dama
   geom_violin(aes(fill=Income, color=Income,
                   fill=after_scale(colorspace::lighten(fill, .3))),
               size=1, bw=.3) +
+  scale_x_discrete(limits=c('Urban', 'Suburban ')) +
   geom_boxplot(width=0.1, size=1, outlier.size=3, fill='white', position=position_dodge(0.9)) +
-  annotate("text", x = 0.7, y = -2, label = "a", size = 8) + #probability zero damage
-  annotate("text", x = 1.0, y = -2, label = "ab", size = 8) +
-  annotate("text", x = 1.3, y = -2, label = "a", size = 8) +
-  annotate("text", x = 1.7, y = -2, label = "b", size = 8) +
-  annotate("text", x = 2.0, y = -2, label = "c", size = 8) +
+  annotate("text", x = 1.7, y = -2, label = "c", size = 8) + #probability zero damage
+  annotate("text", x = 2.0, y = -2, label = "bc", size = 8) +
   annotate("text", x = 2.3, y = -2, label = "c", size = 8) +
-  annotate("text", x = 0.7, y = 50, label = "A", size = 8) + #average of non-zero data
-  annotate("text", x = 1.0, y = 41, label = "A", size = 8) +
-  annotate("text", x = 1.3, y = 67, label = "B", size = 8) +
-  annotate("text", x = 1.7, y = 55, label = "B", size = 8) +
-  annotate("text", x = 2.0, y = 19, label = "A", size = 8) +
-  annotate("text", x = 2.3, y = 36, label = "A", size = 8)
+  annotate("text", x = 0.7, y = -2, label = "a", size = 8) +
+  annotate("text", x = 1.0, y = -2, label = "b", size = 8) +
+  annotate("text", x = 1.3, y = -2, label = "b", size = 8) +
+  annotate("text", x = 1.7, y = 50, label = "A", size = 8) + #average of non-zero data
+  annotate("text", x = 2.0, y = 41, label = "A", size = 8) +
+  annotate("text", x = 2.3, y = 67, label = "B", size = 8) +
+  annotate("text", x = 0.7, y = 55, label = "B", size = 8) +
+  annotate("text", x = 1.0, y = 19, label = "A", size = 8) +
+  annotate("text", x = 1.3, y = 36, label = "A", size = 8)
 #export at 900x600
 
 
@@ -213,12 +215,13 @@ a <- ggplot(data=subset(damage, Area_type!='Forest'), aes(x=Area_type, y=herbivo
   xlab("Land Use Type") + ylab("Herbivore Abundance") +
   geom_boxplot(width=0.8, size=1, outlier.size=3, position=position_dodge(0.9), color='honeydew4') +
   theme(legend.position='none') +
-  annotate("text", x = 0.7, y = 6, label = "a", size = 8) +
-  annotate("text", x = 1, y = 13, label = "c", size = 8) +
-  annotate("text", x = 1.3, y = 26, label = "c", size = 8) +
+  scale_x_discrete(limits=c('Urban', 'Suburban ')) +
   annotate("text", x = 1.7, y = 6, label = "a", size = 8) +
-  annotate("text", x = 2, y = 8, label = "b", size = 8) +
-  annotate("text", x = 2.3, y = 11, label = "b", size = 8)
+  annotate("text", x = 2, y = 13, label = "c", size = 8) +
+  annotate("text", x = 2.3, y = 26, label = "c", size = 8) +
+  annotate("text", x = 0.7, y = 6, label = "a", size = 8) +
+  annotate("text", x = 1, y = 8, label = "b", size = 8) +
+  annotate("text", x = 1.3, y = 11, label = "b", size = 8)
   
 
 
@@ -239,13 +242,14 @@ b <- ggplot(data=subset(damage, Area_type!='Forest'), aes(x=Area_type, y=predato
   scale_fill_manual(values = EBpalette) + 
   xlab("Land Use Type") + ylab("Predator Abundance") +
   geom_boxplot(width=0.8, size=1, outlier.size=3, position=position_dodge(0.9), color='honeydew4') +
-  theme(legend.position=c(0.85,0.85)) +
-  annotate("text", x = 0.7, y = 9, label = "b", size = 8) +
-  annotate("text", x = 1, y = 9, label = "b", size = 8) +
-  annotate("text", x = 1.3, y = 17, label = "c", size = 8) +
-  annotate("text", x = 1.7, y = 4, label = "a", size = 8) +
-  annotate("text", x = 2, y = 6, label = "b", size = 8) +
-  annotate("text", x = 2.3, y = 7, label = "b", size = 8)
+  theme(legend.position=c(0.25,0.85)) +
+  scale_x_discrete(limits=c('Urban', 'Suburban ')) +
+  annotate("text", x = 1.7, y = 9, label = "b", size = 8) +
+  annotate("text", x = 2, y = 9, label = "b", size = 8) +
+  annotate("text", x = 2.3, y = 17, label = "c", size = 8) +
+  annotate("text", x = 0.7, y = 4, label = "a", size = 8) +
+  annotate("text", x = 1, y = 6, label = "b", size = 8) +
+  annotate("text", x = 1.3, y = 7, label = "b", size = 8)
 
 grid.arrange(a, b, ncol=2)
 #export at 1200x600
