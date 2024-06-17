@@ -5,6 +5,7 @@ library(car)
 library(MASS)
 library(lme4)
 library(emmeans)
+library(pscl)
 library(RVAideMemoire) #backtransform emmeans
 library(glmmTMB) #mixed models for zero-inflated count data (bug data)
 library(ggpubr)
@@ -53,6 +54,8 @@ damage <- read.csv("A_rubrum_damage_04Aug2021.csv") %>%
   mutate(Percent_damage_zeroindicator=ifelse(Percent_damage==0, 0, 1)) %>% 
   #create total herbivore and predator columns
   mutate(herbivore = Grasshoppers_crickets_katydids + Caterpillar_like + Hoppers + Aphids + Thrips + Herb_beetles + Whiteflies_mealybugs_scale.insects + Mirid + Larve_pinchers, 
+         chew_herbivore = Grasshoppers_crickets_katydids + Caterpillar_like + Herb_beetles + Larve_pinchers,
+         pierce_herbivore = Hoppers + Aphids + Thrips + Herb_beetles + Whiteflies_mealybugs_scale.insects + Mirid,
          predator = Pred_beetles + Assassins + Spiders + Wasps) 
 
 
@@ -77,6 +80,27 @@ ggqqplot(damage$Percent_damage_sin)
 plot(damage$Percent_damage_sin)
 hist(damage$Percent_damage_sin)
 
+#logit transform
+damage$Percent_damage_logit <- logit(damage$Percent_damage)
+shapiro.test(damage$Percent_damage_logit)
+ggqqplot(damage$Percent_damage_logit)
+plot(damage$Percent_damage_logit)
+hist(damage$Percent_damage_logit)
+
+
+#### Testing for over-dispersion ####
+
+mean(damage$Percent_damage)
+var(damage$Percent_damage)
+
+mean(damage$chew_herbivore)
+var(damage$chew_herbivore)
+
+mean(damage$pierce_herbivore)
+var(damage$pierce_herbivore)
+
+mean(damage$predator)
+var(damage$predator)
 
 
 #### Effect of land use on leaf damage (natural, suburban, urban) ####
@@ -114,10 +138,11 @@ ggplot(data=damage, aes(x=Area_type, y=Percent_damage, fill=Area_type, color=Are
   scale_color_manual(values = EBpalette1) + 
   xlab("Land Use Type") + ylab("Leaf Damage (%)") +
   theme(legend.position='none') + 
+  geom_jitter() +
   geom_violin(aes(fill=Area_type, color=Area_type,
-                  fill=after_scale(colorspace::lighten(fill, .3))),
-              size=1, bw=.3) +
-  geom_boxplot(width=0.1, size=1, outlier.size=3, fill='white') +
+                  fill=after_scale(colorspace::lighten(fill, .7))),
+                  size=0.5, bw=.3) +
+  # geom_boxplot(width=0.1, size=1, outlier.size=3, fill='white')  +
   scale_x_discrete(limits=c('Urban', 'Suburban ', 'Forest')) +
   annotate("text", x = 3, y = -2, label = "c", size = 8) + #probability zero damage
   annotate("text", x = 2, y = -2, label = "b", size = 8) +
@@ -155,7 +180,7 @@ back.emmeans(emmeans(cont_model, ~Area_type*Income), transform='log')
 
 ## Figure ##
 damage$Income <- factor(damage$Income, levels=c("Low", "Medium", "High", "None"))
-EBpalette <- c("#FFCB05" ,"#00B2A9", "#00274C", "black")
+EBpalette <- c("#FFCB05" ,"#00B2A9", "#00274C", "black", "white")
 
 # ggplot(data = barGraphStats(data = subset(damage, !is.na(Percent_damage) & Area_type!='Forest'), variable = "Percent_damage", byFactorNames = c("Area_type", "Income")), aes(x= Area_type, y=mean, fill=Income)) +
 #   geom_bar(stat='identity', position=position_dodge()) +
@@ -169,15 +194,16 @@ EBpalette <- c("#FFCB05" ,"#00B2A9", "#00274C", "black")
 #   scale_fill_manual(values = EBpalette, breaks=c('Low', 'Medium', 'High')) + 
 #   xlab("Area Type") + ylab("Percent Damage")
 
-ggplot(data=subset(damage, Area_type!='Forest'), aes(x=Area_type, y=Percent_damage, fill=Area_type, color=Income)) + 
+ggplot(data=subset(damage, Area_type!='Forest'), aes(x=Area_type, y=Percent_damage, fill=Income, color=Income)) + 
   scale_fill_manual(values = EBpalette) + 
   scale_color_manual(values = EBpalette) + 
   xlab("Land Use Type") + ylab("Leaf Damage (%)") +
+  geom_point(position=position_jitterdodge()) +
   geom_violin(aes(fill=Income, color=Income,
-                  fill=after_scale(colorspace::lighten(fill, .3))),
-              size=1, bw=.3) +
+                  fill=after_scale(colorspace::lighten(fill, .7))),
+              size=0.5, bw=.3) +
   scale_x_discrete(limits=c('Urban', 'Suburban ')) +
-  geom_boxplot(width=0.1, size=1, outlier.size=3, fill='white', position=position_dodge(0.9)) +
+  # geom_boxplot(width=0.1, size=1, outlier.size=3, fill='white', position=position_dodge(0.9)) +
   annotate("text", x = 1.7, y = -2, label = "c", size = 8) + #probability zero damage
   annotate("text", x = 2.0, y = -2, label = "bc", size = 8) +
   annotate("text", x = 2.3, y = -2, label = "c", size = 8) +
@@ -197,33 +223,58 @@ ggplot(data=subset(damage, Area_type!='Forest'), aes(x=Area_type, y=Percent_dama
 
 #### Effect of land use on herbivore and predator abundance (suburban, urban) ####
 
-## Herbivore Stats ##
-summary(herbivoreModel <- glmmTMB(herbivore ~ Area_type*Income + (1|Tree_num), 
+## Pierce Herbivore Stats ##
+summary(pierceHerbivoreModel <- glmmTMB(pierce_herbivore ~ Area_type*Income + (1|Tree_num), 
                         ziformula = ~ 1,  # Specify the zero-inflation formula
                         data = subset(damage, Area_type!='Forest'), 
                         family = nbinom2))
-Anova(herbivoreModel, type='III')
-# Area_type        269.490  1  < 2.2e-16 ***
-# Income           679.353  2  < 2.2e-16 ***
-# Area_type:Income 148.500  2  < 2.2e-16 ***
-emmeans(herbivoreModel, ~Area_type*Income)
+Anova(pierceHerbivoreModel, type='III')
+# Area_type        150.081  1  < 2.2e-16 ***
+# Income           673.512  2  < 2.2e-16 ***
+# Area_type:Income 217.004  2  < 2.2e-16 ***
+emmeans(pierceHerbivoreModel, ~Area_type*Income)
 
-## Herbivore Figure ##
+## Pierce Herbivore Figure ##
 
-a <- ggplot(data=subset(damage, Area_type!='Forest'), aes(x=Area_type, y=herbivore, fill=Income)) + 
+b <- ggplot(data=subset(damage, Area_type!='Forest'), aes(x=Area_type, y=pierce_herbivore, fill=Income)) + 
   scale_fill_manual(values = EBpalette) + 
-  xlab("Land Use Type") + ylab("Herbivore Abundance") +
+  xlab("Land Use Type") + ylab("Piercing Herbivore Abundance") +
   geom_boxplot(width=0.8, size=1, outlier.size=3, position=position_dodge(0.9), color='honeydew4') +
   theme(legend.position='none') +
   scale_x_discrete(limits=c('Urban', 'Suburban ')) +
   annotate("text", x = 1.7, y = 6, label = "a", size = 8) +
-  annotate("text", x = 2, y = 13, label = "c", size = 8) +
+  annotate("text", x = 2, y = 12, label = "c", size = 8) +
   annotate("text", x = 2.3, y = 26, label = "c", size = 8) +
   annotate("text", x = 0.7, y = 6, label = "a", size = 8) +
   annotate("text", x = 1, y = 8, label = "b", size = 8) +
-  annotate("text", x = 1.3, y = 11, label = "b", size = 8)
-  
+  annotate("text", x = 1.3, y = 10.5, label = "b", size = 8)
 
+
+## Chewing Herbivore Stats ##
+summary(herbivoreModel <- glmmTMB(chew_herbivore ~ Area_type*Income + (1|Tree_num), 
+                                  ziformula = ~ 1,  # Specify the zero-inflation formula
+                                  data = subset(damage, Area_type!='Forest'), 
+                                  family = nbinom2))
+Anova(herbivoreModel, type='III')
+# Area_type         0.0028  1     0.9581    
+# Income           69.3071  2  8.916e-16 ***
+# Area_type:Income 19.3161  2  6.391e-05 ***
+emmeans(herbivoreModel, ~Area_type*Income)
+
+## Chewing Herbivore Figure ##
+
+a <- ggplot(data=subset(damage, Area_type!='Forest'), aes(x=Area_type, y=chew_herbivore, fill=Income)) + 
+  scale_fill_manual(values = EBpalette) + 
+  xlab("Land Use Type") + ylab("Chewing Herbivore Abundance") +
+  geom_boxplot(width=0.8, size=1, outlier.size=3, position=position_dodge(0.9), color='honeydew4') +
+  theme(legend.position='none') +
+  scale_x_discrete(limits=c('Urban', 'Suburban ')) +
+  annotate("text", x = 1.7, y = 3, label = "ab", size = 8) +
+  annotate("text", x = 2, y = 3, label = "b", size = 8) +
+  annotate("text", x = 2.3, y = 9, label = "c", size = 8) +
+  annotate("text", x = 0.7, y = 1, label = "a", size = 8) +
+  annotate("text", x = 1, y = 2, label = "a", size = 8) +
+  annotate("text", x = 1.3, y = 3, label = "a", size = 8)
 
 ## Predator Stats ##
 summary(predatorModel <- glmmTMB(predator ~ Area_type*Income + (1|Tree_num), 
@@ -238,7 +289,7 @@ emmeans(predatorModel, ~Area_type*Income)
 
 ## Predator Figure ##
 
-b <- ggplot(data=subset(damage, Area_type!='Forest'), aes(x=Area_type, y=predator, fill=Income)) + 
+c <- ggplot(data=subset(damage, Area_type!='Forest'), aes(x=Area_type, y=predator, fill=Income)) + 
   scale_fill_manual(values = EBpalette) + 
   xlab("Land Use Type") + ylab("Predator Abundance") +
   geom_boxplot(width=0.8, size=1, outlier.size=3, position=position_dodge(0.9), color='honeydew4') +
@@ -251,8 +302,8 @@ b <- ggplot(data=subset(damage, Area_type!='Forest'), aes(x=Area_type, y=predato
   annotate("text", x = 1, y = 6, label = "b", size = 8) +
   annotate("text", x = 1.3, y = 7, label = "b", size = 8)
 
-grid.arrange(a, b, ncol=2)
-#export at 1200x600
+grid.arrange(a, b, c, ncol=3)
+#export at 1800x600
 
 
 
