@@ -180,7 +180,7 @@ back.emmeans(emmeans(cont_model, ~Area_type*Income), transform='log')
 
 ## Figure ##
 damage$Income <- factor(damage$Income, levels=c("Low", "Medium", "High", "None"))
-EBpalette <- c("#FFCB05" ,"#00B2A9", "#00274C", "black", "white")
+EBpalette <- c("#FFCB05" ,"#E67904", "#00274C", "black", "white")
 
 # ggplot(data = barGraphStats(data = subset(damage, !is.na(Percent_damage) & Area_type!='Forest'), variable = "Percent_damage", byFactorNames = c("Area_type", "Income")), aes(x= Area_type, y=mean, fill=Income)) +
 #   geom_bar(stat='identity', position=position_dodge()) +
